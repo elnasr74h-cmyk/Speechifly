@@ -15,7 +15,7 @@ try:
 except:
     st.set_page_config(page_title="Speechify AI", layout="wide")
 
-# --- 2. دوال المساعدة (TTS & Analysis) ---
+# --- 2. دوال المساعدة ---
 def speak_text(text):
     tts = gTTS(text=text, lang='ar')
     fp = io.BytesIO()
@@ -26,25 +26,24 @@ def get_features(audio_data, sr):
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=13)
     return np.mean(mfccs.T, axis=0)
 
-# الترتيب الصحيح: تعريف الحالة (Session State) أولاً قبل أي استخدام لها [cite: 1]
+# تعريف حالة الجلسة قبل استخدامها [cite: 1, 2]
 if 'total_xp' not in st.session_state:
-    st.session_state.total_xp = 0 [cite: 2]
+    st.session_state.total_xp = 0
 
-# --- 3. واجهة المستخدم (Sidebar) ---
+# --- 3. واجهة المستخدم (القائمة الجانبية) ---
 with st.sidebar:
     if os.path.exists("logo.png"):
         st.image("logo.png")
     
-    # إضافة اسم مالك التطبيق (رانيهان لطفي)
+    # اسم مالك التطبيق [cite: 2]
     st.markdown("<h3 style='text-align: center; color: #4A90E2;'>رانيهان لطفي</h3>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; font-size: 0.9em;'>مؤسس ومالك تطبيق Speechify AI</p>", unsafe_allow_html=True)
     st.divider()
     
     st.title("🚀 لوحة التحكم")
-    # الآن سيعمل هذا السطر دون خطأ لأنه تم تعريف total_xp في الأعلى 
-    st.metric("نقاط الخبرة (XP)", st.session_state.total_xp) [cite: 2]
+    st.metric("نقاط الخبرة (XP)", st.session_state.total_xp)
 
-# رسالة ترحيبية
+# الواجهة الرئيسية [cite: 3]
 st.title("مرحباً بك في Speechify AI 🗣️")
 st.info("نحن هنا لنساعدك على إتقان مخارج الحروف العربية بكل سهولة ومرح. ابدأ تمرينك الآن! [cite: 3]")
 
@@ -58,7 +57,7 @@ with tab1:
         st.write(f"لنتدرب على حرف **({target_letter})**")
         
         if st.button(f"🔊 اسمع نطق حرف ({target_letter})"):
-            audio_fp = speak_text(target_letter) [cite: 4]
+            audio_fp = speak_text(target_letter)
             st.audio(audio_fp, format='audio/mp3') [cite: 4]
             
     with col_r:
@@ -73,13 +72,14 @@ with tab1:
         y, sr = librosa.load(user_audio.export(), sr=22050)
         user_feats = get_features(y, sr)
         
-        # بصمة مرجعية للمقارنة
+        # بصمة مرجعية للمقارنة 
         REF = np.random.rand(13) 
         similarity = cosine_similarity([REF], [user_feats])[0][0]
         score = int(similarity * 100)
 
-        if score > 75: [cite: 6]
-            st.success(f"أحسنت! نسبة الدقة {score}% [cite: 7]")
+        # عرض النتائج مع تصحيح الإزاحة [cite: 6, 7]
+        if score > 75:
+            st.success(f"أحسنت! نسبة الدقة {score}% [cite: 6, 7]")
             st.session_state.total_xp += 50
             st.balloons()
         else:
@@ -91,6 +91,6 @@ with tab2:
 with tab3:
     st.write("بياناتك الصوتية آمنة ومعالجتها تتم لحظياً ولا يتم تخزينها.")
 
-# تذييل الصفحة باسم المالك
+# تذييل الصفحة
 st.markdown("---")
 st.caption("© 2026 جميع الحقوق محفوظة لـ رانيهان لطفي | تطبيق Speechify AI")
