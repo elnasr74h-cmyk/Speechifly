@@ -29,7 +29,7 @@ def get_features(audio_data, sr):
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=13)
     return np.mean(mfccs.T, axis=0)
 
-# تعريف حالة الجلسة
+# تعريف حالة الجلسة قبل أي استخدام
 if 'total_xp' not in st.session_state:
     st.session_state.total_xp = 0
 
@@ -64,6 +64,12 @@ with tab1:
             st.audio(audio_fp, format='audio/mp3')
             
     with col_r:
-        # إصلاح مكان التحذير لضمان عدم حدوث NameError
+        # إصلاح السطر الذي سبب الخطأ (تأكد أن النص في سطر واحد)
         if target_letter == "راء":
-            st.warning("نصيحة: تأكد
+            st.warning("نصيحة: تأكد من ملامسة طرف اللسان لسقف الحنك العلوي.")
+        elif target_letter == "سين":
+            st.warning("نصيحة: ضع طرف اللسان خلف الأسنان السفلى.")
+
+    st.divider()
+    st.subheader("🎤 سجل نطقك للحرف:")
+    user_audio = audiorecorder("اضغط
