@@ -1,0 +1,8 @@
+streamlit
+librosa
+numpy
+scikit-learn
+streamlit-audiorecorder
+soundfile
+gTTS
+Pillow
